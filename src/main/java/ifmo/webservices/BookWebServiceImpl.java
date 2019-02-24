@@ -7,6 +7,7 @@ import javax.jws.WebService;
 
 @WebService(name = "BookWebService", serviceName = "BookService")
 public class BookWebServiceImpl implements BookWebService {
+
     @WebMethod(operationName = "getAllBooks")
     public List<Book> getAllBooks() {
         OracleSQLDAO dao = new OracleSQLDAO();
