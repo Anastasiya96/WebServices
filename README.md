@@ -3,7 +3,7 @@
 ## Lab №1
 
 
-Oracle Database is used.
+Oracle Database used.
 Table Books created:
 
 ```
