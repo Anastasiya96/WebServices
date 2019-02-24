@@ -10,7 +10,7 @@ Table Books created:
 CREATE TABLE Books (
    id        	NUMBER PRIMARY KEY,
    name      	VARCHAR(100),
-   publishing VARCHAR(30)
+   publishing  VARCHAR(30)
    author 	  VARCHAR(40),
    year 	    NUMBER,
    pages	    NUMBER
