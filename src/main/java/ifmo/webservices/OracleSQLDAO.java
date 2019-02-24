@@ -19,12 +19,12 @@ public class OracleSQLDAO {
             ResultSet rs = stmt.executeQuery(query);
 
             while (rs.next()) {
-                int id = rs.getInt(Field.id.toString());
-                String name = rs.getString(Field.name.toString());
-                String publishing = rs.getString(Field.publishing.toString());
-                String author = rs.getString(Field.author.toString());
-                int year = rs.getInt(Field.year.toString());
-                int pages = rs.getInt(Field.pages.toString());
+                int id = rs.getInt(Field.fromValue("id").toString());
+                String name = rs.getString(Field.fromValue("name").toString());
+                String publishing = rs.getString(Field.fromValue("publishing").toString());
+                String author = rs.getString(Field.fromValue("author").toString());
+                int year = rs.getInt(Field.fromValue("year").toString());
+                int pages = rs.getInt(Field.fromValue("pages").toString());
 
                 Book book = new Book(author, id, name, pages, publishing, year);
                 books.add(book);
@@ -39,45 +39,17 @@ public class OracleSQLDAO {
         return getBooks("select * from books");
     }
 
-    public List<Book> getBooksByFields(BookCondition[] bookRequests) {
+    public List<Book> getBooksByFields(List<BookCondition> bookRequests) {
         StringBuilder query = new StringBuilder("select * from books where ");
 
         for (BookCondition bookRequest : bookRequests) {
             String equalExpression = String.format("%s = '%s'", bookRequest.getField(), bookRequest.getValue());
             query.append(equalExpression);
 
-            if(!bookRequest.equals(bookRequests[bookRequests.length - 1])) {
+            if(!bookRequest.equals(bookRequests.get(bookRequests.size() - 1))) {
                 query.append(" and ");
             }
         }
         return getBooks(query.toString());
-    }
-}
-
-enum Field { id, name, publishing, author, year, pages }
-
-class BookCondition {
-    private Field field;
-    private Object value;
-
-    public BookCondition(Field field, Object value) {
-        this.field = field;
-        this.value = value;
-    }
-
-    public Field getField() {
-        return field;
-    }
-
-    public void setField(Field field) {
-        this.field = field;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 }

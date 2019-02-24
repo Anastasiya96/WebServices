@@ -24,6 +24,8 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
+    private final static QName _GetAllBooks_QNAME = new QName("http://webservices.ifmo/", "getAllBooks");
+    private final static QName _GetAllBooksResponse_QNAME = new QName("http://webservices.ifmo/", "getAllBooksResponse");
     private final static QName _GetBooks_QNAME = new QName("http://webservices.ifmo/", "getBooks");
     private final static QName _GetBooksResponse_QNAME = new QName("http://webservices.ifmo/", "getBooksResponse");
 
@@ -32,6 +34,22 @@ public class ObjectFactory {
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link GetAllBooks }
+     * 
+     */
+    public GetAllBooks createGetAllBooks() {
+        return new GetAllBooks();
+    }
+
+    /**
+     * Create an instance of {@link GetAllBooksResponse }
+     * 
+     */
+    public GetAllBooksResponse createGetAllBooksResponse() {
+        return new GetAllBooksResponse();
     }
 
     /**
@@ -56,6 +74,40 @@ public class ObjectFactory {
      */
     public Book createBook() {
         return new Book();
+    }
+
+    /**
+     * Create an instance of {@link BookCondition }
+     * 
+     */
+    public BookCondition createBookCondition() {
+        return new BookCondition();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetAllBooks }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link GetAllBooks }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://webservices.ifmo/", name = "getAllBooks")
+    public JAXBElement<GetAllBooks> createGetAllBooks(GetAllBooks value) {
+        return new JAXBElement<GetAllBooks>(_GetAllBooks_QNAME, GetAllBooks.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetAllBooksResponse }{@code >}
+     * 
+     * @param value
+     *     Java instance representing xml element's value.
+     * @return
+     *     the new instance of {@link JAXBElement }{@code <}{@link GetAllBooksResponse }{@code >}
+     */
+    @XmlElementDecl(namespace = "http://webservices.ifmo/", name = "getAllBooksResponse")
+    public JAXBElement<GetAllBooksResponse> createGetAllBooksResponse(GetAllBooksResponse value) {
+        return new JAXBElement<GetAllBooksResponse>(_GetAllBooksResponse_QNAME, GetAllBooksResponse.class, null, value);
     }
 
     /**

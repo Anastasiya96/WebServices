@@ -1,7 +1,9 @@
 package ifmo.webservices;
 
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 public class WebServiceClient {
@@ -9,11 +11,15 @@ public class WebServiceClient {
     public static void main(String[] args) throws MalformedURLException {
         URL url = new URL("http://localhost:8081/BookService?wsdl");
         BookService bookService = new BookService(url);
-        List<Book> books = bookService.getBookWebServicePort().getBooks();
+        List<Book> books = bookService.getBookWebServicePort().getAllBooks();
         printBooks(books);
 
-        books = bookService.getBookWebServicePort().getBookById(5);
+        books = bookService.getBookWebServicePort().getBooks(Arrays.asList(new BookCondition(Field.fromValue("id"), 5)));
         printBooks(books);
+    }
+
+    private void startListening() {
+
     }
 
     private static void printBooks(List<Book> books) {
