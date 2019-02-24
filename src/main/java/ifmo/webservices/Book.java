@@ -1,83 +1,220 @@
+
 package ifmo.webservices;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+import java.util.Objects;
+
+
+/**
+ * <p>Java class for book complex type.
+ * 
+ * <p>The following schema fragment specifies the expected         content contained within this class.
+ * 
+ * <pre>
+ * &lt;complexType name="book"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="author" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="pages" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *         &lt;element name="publishing" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="year" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
+ * 
+ * 
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "book", propOrder = {
+    "author",
+    "id",
+    "name",
+    "pages",
+    "publishing",
+    "year"
+})
 public class Book {
-  private int id;
-  private String name;
-  private String publishing;
-  private String author;
-  private int year;
-  private int pages;
+    public Book(String author, int id, String name, int pages, String publishing, int year) {
+        this.author = author;
+        this.id = id;
+        this.name = name;
+        this.pages = pages;
+        this.publishing = publishing;
+        this.year = year;
+    }
 
-  public Book() {
+    public Book() {
 
-  }
+    }
 
-  public Book(int id, String name, String publishing, String author, int year, int pages) {
-    this.id = id;
-    this.name = name;
-    this.publishing = publishing;
-    this.author = author;
-    this.year = year;
-    this.pages = pages;
-  }
+    @XmlElement(name = "author", required = true)
+    protected String author;
 
-  public int getId() {
-    return id;
-  }
+    @XmlElement(name = "id", required = true)
+    protected int id;
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    @XmlElement(name = "name", required = true)
+    protected String name;
 
-  public String getName() {
-    return name;
-  }
+    @XmlElement(name = "pages", required = true)
+    protected int pages;
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    @XmlElement(name = "publishing", required = true)
+    protected String publishing;
 
-  public String getPublishing() {
-    return publishing;
-  }
+    @XmlElement(name = "year", required = true)
+    protected int year;
 
-  public void setPublishing(String publishing) {
-    this.publishing = publishing;
-  }
+    /**
+     * Gets the value of the author property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getAuthor() {
+        return author;
+    }
 
-  public String getAuthor() {
-    return author;
-  }
+    /**
+     * Sets the value of the author property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setAuthor(String value) {
+        this.author = value;
+    }
 
-  public void setAuthor(String author) {
-    this.author = author;
-  }
+    /**
+     * Gets the value of the id property.
+     * 
+     */
+    public int getId() {
+        return id;
+    }
 
-  public int getYear() {
-    return year;
-  }
+    /**
+     * Sets the value of the id property.
+     * 
+     */
+    public void setId(int value) {
+        this.id = value;
+    }
 
-  public void setYear(int year) {
-    this.year = year;
-  }
+    /**
+     * Gets the value of the name property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getName() {
+        return name;
+    }
 
-  public int getPages() {
-    return pages;
-  }
+    /**
+     * Sets the value of the name property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setName(String value) {
+        this.name = value;
+    }
 
-  public void setPages(int pages) {
-    this.pages = pages;
-  }
+    /**
+     * Gets the value of the pages property.
+     * 
+     */
+    public int getPages() {
+        return pages;
+    }
 
-  @Override
-  public String toString() {
-    return "Book{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", publishing='" + publishing + '\'' +
-            ", author='" + author + '\'' +
-            ", year=" + year +
-            ", pages=" + pages +
-            '}';
-  }
+    /**
+     * Sets the value of the pages property.
+     * 
+     */
+    public void setPages(int value) {
+        this.pages = value;
+    }
+
+    /**
+     * Gets the value of the publishing property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getPublishing() {
+        return publishing;
+    }
+
+    /**
+     * Sets the value of the publishing property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPublishing(String value) {
+        this.publishing = value;
+    }
+
+    /**
+     * Gets the value of the year property.
+     * 
+     */
+    public int getYear() {
+        return year;
+    }
+
+    /**
+     * Sets the value of the year property.
+     * 
+     */
+    public void setYear(int value) {
+        this.year = value;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", publishing='" + publishing + '\'' +
+                ", author='" + author + '\'' +
+                ", year=" + year +
+                ", pages=" + pages +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return id == book.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

@@ -1,8 +1,4 @@
-
-package ifmo.webservices.client;
-
-import ifmo.webservices.BookWebService;
-import ifmo.webservices.BookWebService;
+package ifmo.webservices;
 
 import java.net.MalformedURLException;
 import java.net.URL;

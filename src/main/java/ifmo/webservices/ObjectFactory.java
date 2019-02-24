@@ -1,7 +1,5 @@
 
-package ifmo.webservices.client;
-
-import ifmo.webservices.Book;
+package ifmo.webservices;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;

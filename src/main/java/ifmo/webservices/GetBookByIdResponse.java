@@ -1,5 +1,5 @@
 
-package ifmo.webservices.client;
+package ifmo.webservices;
 
 import ifmo.webservices.Book;
 
@@ -12,12 +12,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getBooksResponse complex type.
+ * <p>Java class for getBookByIdResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected         content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getBooksResponse"&gt;
+ * &lt;complexType name="getBookByIdResponse"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
@@ -31,10 +31,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getBooksResponse", propOrder = {
+@XmlType(name = "getBookByIdResponse", propOrder = {
     "_return"
 })
-public class GetBooksResponse {
+public class GetBookByIdResponse {
 
     @XmlElement(name = "return")
     protected List<Book> _return;
