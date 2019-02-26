@@ -3,17 +3,17 @@
 ## Lab №1
 
 
-Oracle Database is used.
+Oracle Database used.
 Table Books created:
 
 ```
 CREATE TABLE Books (
-   id        	NUMBER PRIMARY KEY,
-   name      	VARCHAR(100),
+   id         NUMBER PRIMARY KEY,
+   name       VARCHAR(100),
    publishing VARCHAR(30)
-   author 	  VARCHAR(40),
-   year 	    NUMBER,
-   pages	    NUMBER
+   author     VARCHAR(40),
+   year       NUMBER,
+   pages      NUMBER
 );
 ```
 
