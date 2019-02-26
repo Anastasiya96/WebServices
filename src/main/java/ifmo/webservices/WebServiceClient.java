@@ -1,5 +1,6 @@
 package ifmo.webservices;
 
+import javax.xml.ws.WebServiceException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,9 +9,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-enum MenuOption { Add, Find, Print, Clear, Exit }
+enum MenuOption {Add, Print, Clear, Find, Exit}
 
 public class WebServiceClient {
+
+    private static final String standaloneUrl = "http://localhost:8081/BookService?wsdl";
+    private static final String j2eeUrl = "http://localhost:8082/WebService1/BookService?wsdl";
 
     private String url;
     private BookService bookService;
@@ -22,35 +26,41 @@ public class WebServiceClient {
     }
 
     public static void main(String[] args) throws MalformedURLException {
-        WebServiceClient client = new WebServiceClient("http://localhost:8081/BookService?wsdl");
-        client.startListening();
-    }
+        try {
+            WebServiceClient client = new WebServiceClient(j2eeUrl);
+            client.startListening();
 
-    private void startListening() {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
-
-            URL url = new URL(this.url);
-            this.bookService = new BookService(url);
-
-            while (true) {
-                printMenu();
-                processOption(in);
-            }
-        }
-        catch (IOException ex) {
+        } catch (WebServiceException ex) {
             System.err.println(ex.getMessage());
         }
     }
 
-    private void stopListening() {
+    private void startListening() {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(System.in))) {
+            URL url = new URL(this.url);
+            this.bookService = new BookService(url);
 
+            while (true) {
+                try {
+                    printMenu();
+                    processOption(in);
+                } catch (IOException ex) {
+                    System.err.println(ex.getMessage());
+                }
+            }
+
+        } catch (MalformedURLException ex) {
+            System.err.println(ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
     }
 
     private void printMenu() {
-        System.out.println("-----Menu-----");
+        System.out.println("------------Menu------------");
 
         MenuOption[] options = MenuOption.values();
-        for(int i = 0; i < options.length; i++) {
+        for (int i = 0; i < options.length; i++) {
             System.out.printf("%2d. %s\n", i + 1, getOptionText(options[i]));
         }
     }
@@ -79,36 +89,52 @@ public class WebServiceClient {
         MenuOption menuOption = MenuOption.values()[option - 1];
 
         switch (menuOption) {
-            case Add: addCondition(in); break;
-            case Find: findResults(); break;
-            case Print: printConditions(); break;
-            case Clear: clearConditions(); break;
-            case Exit: exit(); break;
+            case Add:
+                addCondition(in);
+                break;
+            case Find:
+                findResults();
+                break;
+            case Print:
+                printConditions();
+                break;
+            case Clear:
+                clearConditions();
+                break;
+            case Exit:
+                exit();
+                break;
         }
     }
 
     private String getOptionText(MenuOption menuOption) {
         switch (menuOption) {
-            case Add: return "Add search condition";
-            case Find: return "Find results";
-            case Print: return "Print saved conditions";
-            case Clear: return "Clear saved conditions";
-            case Exit: return "Exit";
-            default: return "Option not supported";
+            case Add:
+                return "Add search condition";
+            case Find:
+                return "Find results";
+            case Print:
+                return "Print saved conditions";
+            case Clear:
+                return "Clear saved conditions";
+            case Exit:
+                return "Exit";
+            default:
+                return "Option not supported";
         }
     }
 
     private void addCondition(BufferedReader in) throws IOException {
         System.out.println("Choose field:");
-        Field[] fields = Field.values();
 
-        for(int i = 0; i < fields.length; i++) {
+        Field[] fields = Field.values();
+        for (int i = 0; i < fields.length; i++) {
             System.out.printf("%2d. %s\n", i + 1, fields[i]);
         }
 
         int field = readOption(in);
 
-        if(field < 1 || field > fields.length) {
+        if (field < 1 || field > fields.length) {
             System.err.println("Wrong option");
         }
 
@@ -127,7 +153,7 @@ public class WebServiceClient {
     }
 
     private void printConditions() {
-        if(this.conditions.size() == 0){
+        if (this.conditions.size() == 0) {
             System.out.println("No conditions saved");
             return;
         }
@@ -145,7 +171,7 @@ public class WebServiceClient {
     }
 
     private void exit() {
-       System.exit(0);
+        System.exit(0);
     }
 
     private void printBooks(List<Book> books) {
