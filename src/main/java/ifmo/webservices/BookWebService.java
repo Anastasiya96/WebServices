@@ -1,6 +1,8 @@
 
 package ifmo.webservices;
 
+import ifmo.webservices.client.ObjectFactory;
+
 import java.util.List;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -31,8 +33,8 @@ public interface BookWebService {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getAllBooks", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.GetAllBooks")
-    @ResponseWrapper(localName = "getAllBooksResponse", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.GetAllBooksResponse")
+    @RequestWrapper(localName = "getAllBooks", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.client.GetAllBooks")
+    @ResponseWrapper(localName = "getAllBooksResponse", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.client.GetAllBooksResponse")
     public List<Book> getAllBooks();
 
     /**
@@ -43,8 +45,8 @@ public interface BookWebService {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getBooks", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.GetBooks")
-    @ResponseWrapper(localName = "getBooksResponse", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.GetBooksResponse")
+    @RequestWrapper(localName = "getBooks", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.client.GetBooks")
+    @ResponseWrapper(localName = "getBooksResponse", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.client.GetBooksResponse")
     public List<Book> getBooks(
             @WebParam(name = "conditions", targetNamespace = "")
                     List<BookCondition> conditions);

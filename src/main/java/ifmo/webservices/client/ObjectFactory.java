@@ -1,5 +1,12 @@
 
-package ifmo.webservices;
+package ifmo.webservices.client;
+
+import ifmo.webservices.Book;
+import ifmo.webservices.BookCondition;
+import ifmo.webservices.client.GetAllBooks;
+import ifmo.webservices.client.GetAllBooksResponse;
+import ifmo.webservices.client.GetBooks;
+import ifmo.webservices.client.GetBooksResponse;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;

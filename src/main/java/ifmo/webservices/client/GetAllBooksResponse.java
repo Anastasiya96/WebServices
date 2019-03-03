@@ -1,5 +1,7 @@
 
-package ifmo.webservices;
+package ifmo.webservices.client;
+
+import ifmo.webservices.Book;
 
 import java.util.ArrayList;
 import java.util.List;

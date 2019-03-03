@@ -1,4 +1,9 @@
-package ifmo.webservices;
+package ifmo.webservices.client;
+
+import ifmo.webservices.Book;
+import ifmo.webservices.BookCondition;
+import ifmo.webservices.BookService;
+import ifmo.webservices.Field;
 
 import javax.xml.ws.WebServiceException;
 import java.io.BufferedReader;
@@ -27,7 +32,7 @@ public class WebServiceClient {
 
     public static void main(String[] args) throws MalformedURLException {
         try {
-            WebServiceClient client = new WebServiceClient(j2eeUrl);
+            WebServiceClient client = new WebServiceClient(standaloneUrl);
             client.startListening();
 
         } catch (WebServiceException ex) {
