@@ -19,7 +19,6 @@ enum MenuOption {AddField, Add, Delete, Modify, Print, Clear, Find, Exit}
 public class WebServiceClient {
 
     private static final String standaloneUrl = "http://localhost:8081/BookService?wsdl";
-    private static final String j2eeUrl = "http://localhost:8082/WebService1/BookService?wsdl";
 
     private String url;
     private BookService bookService;

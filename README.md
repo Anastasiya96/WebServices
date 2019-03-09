@@ -20,3 +20,8 @@ CREATE TABLE Books (
 Implemented:
 - SOAP standalone-application 
 - SOAP J2EE-application based on Glassfish5 server
+
+## Lab №2
+
+
+CRUD operations added.
