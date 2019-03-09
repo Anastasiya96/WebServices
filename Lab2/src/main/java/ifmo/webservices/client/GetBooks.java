@@ -1,7 +1,7 @@
 
 package ifmo.webservices.client;
 
-import ifmo.webservices.BookCondition;
+import ifmo.webservices.BookFieldValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class GetBooks {
 
-    protected List<BookCondition> conditions;
+    protected List<BookFieldValue> conditions;
 
     /**
      * Gets the value of the conditions property.
@@ -55,13 +55,13 @@ public class GetBooks {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link BookCondition }
+     * {@link BookFieldValue }
      * 
      * 
      */
-    public List<BookCondition> getConditions() {
+    public List<BookFieldValue> getConditions() {
         if (conditions == null) {
-            conditions = new ArrayList<BookCondition>();
+            conditions = new ArrayList<BookFieldValue>();
         }
         return this.conditions;
     }

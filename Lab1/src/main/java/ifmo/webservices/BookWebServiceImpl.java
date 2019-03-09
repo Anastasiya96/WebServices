@@ -16,7 +16,7 @@ public class BookWebServiceImpl implements BookWebService {
     }
 
     @WebMethod(operationName = "getBooks")
-    public List<Book> getBooks(@WebParam(name = "conditions") List<BookCondition> conditions) {
+    public List<Book> getBooks(@WebParam(name = "conditions") List<BookFieldValue> conditions) {
         OracleSQLDAO dao = new OracleSQLDAO();
         return dao.getBooksByFields(conditions);
     }

@@ -30,17 +30,17 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "bookCondition", propOrder = {
     "field", "value"
 })
-public class BookCondition {
+public class BookFieldValue {
 
     @XmlSchemaType(name = "string")
     protected Field field;
 
-    public BookCondition(Field field, Object value) {
+    public BookFieldValue(Field field, Object value) {
         this.field = field;
         this.value = value;
     }
 
-    public BookCondition() {
+    public BookFieldValue() {
     }
 
     @XmlSchemaType(name = "string")
@@ -81,7 +81,7 @@ public class BookCondition {
 
     @Override
     public String toString() {
-        return "Condition {" +
+        return "Book filed value {" +
                 "field=" + field +
                 ", value='" + value +
                 "'}";

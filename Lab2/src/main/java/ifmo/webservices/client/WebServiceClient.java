@@ -1,7 +1,7 @@
 package ifmo.webservices.client;
 
 import ifmo.webservices.Book;
-import ifmo.webservices.BookCondition;
+import ifmo.webservices.BookFieldValue;
 import ifmo.webservices.BookService;
 import ifmo.webservices.Field;
 
@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-enum MenuOption {Add, Print, Clear, Find, Exit}
+enum MenuOption {AddField, Add, Delete, Modify, Print, Clear, Find, Exit}
 
 public class WebServiceClient {
 
@@ -24,7 +24,7 @@ public class WebServiceClient {
     private String url;
     private BookService bookService;
 
-    private List<BookCondition> conditions = new ArrayList<BookCondition>();
+    private List<BookFieldValue> conditions = new ArrayList<BookFieldValue>();
 
     public WebServiceClient(String serviceUrl) {
         this.url = serviceUrl;
@@ -32,7 +32,7 @@ public class WebServiceClient {
 
     public static void main(String[] args) throws MalformedURLException {
         try {
-            WebServiceClient client = new WebServiceClient(j2eeUrl);
+            WebServiceClient client = new WebServiceClient(standaloneUrl);
             client.startListening();
 
         } catch (WebServiceException ex) {
@@ -70,21 +70,21 @@ public class WebServiceClient {
         }
     }
 
-    private int readOption(BufferedReader in) throws IOException {
+    private int readIntValue(BufferedReader in) throws IOException {
         int option = -1;
 
         String input = in.readLine();
         try {
             option = Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            System.err.println("Wrong option");
+            return option;
         }
 
         return option;
     }
 
     private void processOption(BufferedReader in) throws IOException {
-        int option = readOption(in);
+        int option = readIntValue(in);
 
         if (option < 1 || option > MenuOption.values().length) {
             System.err.println("Wrong option");
@@ -94,8 +94,17 @@ public class WebServiceClient {
         MenuOption menuOption = MenuOption.values()[option - 1];
 
         switch (menuOption) {
-            case Add:
+            case AddField:
                 addCondition(in);
+                break;
+            case Add:
+                add(in);
+                break;
+            case Delete:
+                delete(in);
+                break;
+            case Modify:
+                modify(in);
                 break;
             case Find:
                 findResults();
@@ -114,8 +123,14 @@ public class WebServiceClient {
 
     private String getOptionText(MenuOption menuOption) {
         switch (menuOption) {
-            case Add:
+            case AddField:
                 return "Add search condition";
+            case Add:
+                return "Add new book";
+            case Delete:
+                return "Delete book";
+            case Modify:
+                return "Modify book";
             case Find:
                 return "Find results";
             case Print:
@@ -137,19 +152,112 @@ public class WebServiceClient {
             System.out.printf("%2d. %s\n", i + 1, fields[i]);
         }
 
-        int field = readOption(in);
+        int field = readIntValue(in);
 
         if (field < 1 || field > fields.length) {
             System.err.println("Wrong option");
+            return;
         }
 
         System.out.println("Print expected field value:");
         String value = in.readLine();
 
-        BookCondition condition = new BookCondition(fields[field - 1], value);
+        BookFieldValue condition = new BookFieldValue(fields[field - 1], value);
         this.conditions.add(condition);
 
         System.out.println("Condition saved: " + condition);
+    }
+
+    private void add(BufferedReader in) {
+        Book book = new Book();
+        try {
+            Field[] fields = Field.values();
+            for (int i = 0; i < fields.length; i++) {
+                if (fields[i] != Field.ID) {
+                    System.out.printf("Print '%s' value:\n", fields[i]);
+                    book.setField(fields[i], in.readLine());
+                }
+            }
+
+            int id = this.bookService.getBookWebServicePort().addBook(book);
+            System.out.println("Book added: id = " + id);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private void delete(BufferedReader in) {
+        try {
+            int id = findBookById(in);
+            if (id < 0) {
+                return;
+            }
+
+            boolean success = this.bookService.getBookWebServicePort().deleteBook(id);
+            if (success) {
+                System.out.println("Book deleted");
+            } else {
+                System.out.println("Book deletion failed");
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private void modify(BufferedReader in) {
+        try {
+            int id = findBookById(in);
+            if (id < 0) {
+                return;
+            }
+
+            List<BookFieldValue> newValues = new ArrayList<BookFieldValue>();
+
+            Field[] fields = Field.values();
+
+            for (int i = 0; i < fields.length; i++) {
+                if (fields[i] != Field.ID) {
+                    System.out.printf("Print '%s' value (to skip press enter):\n", fields[i]);
+                    String value = in.readLine();
+
+                    if (!value.isEmpty()) {
+                        newValues.add(new BookFieldValue(fields[i], value));
+                    }
+                }
+            }
+
+            boolean success = this.bookService.getBookWebServicePort().modifyBook(id, newValues);
+            if (success) {
+                System.out.println("Book modified");
+            } else {
+                System.out.println("Book modification failed");
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private int findBookById(BufferedReader in) throws IOException {
+        System.out.println("Print id:");
+        int id = readIntValue(in);
+
+        if (id < 0) {
+            System.err.println("Wrong id value");
+            return -1;
+        }
+
+        List<Book> books = this.bookService.getBookWebServicePort().getBooks(
+                new ArrayList<BookFieldValue>() {{
+                    add(new BookFieldValue(Field.ID, id));
+                }});
+
+        if (books.size() == 0) {
+            System.err.println("Book with such id was not found");
+            return -1;
+        } else {
+            System.out.println("Book found: " + books.get(0));
+            return id;
+        }
     }
 
     private void findResults() {
@@ -165,7 +273,7 @@ public class WebServiceClient {
 
         System.out.println("Saved conditions:");
 
-        for (BookCondition condition : this.conditions) {
+        for (BookFieldValue condition : this.conditions) {
             System.out.println(condition);
         }
     }

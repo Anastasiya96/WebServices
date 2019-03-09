@@ -49,6 +49,6 @@ public interface BookWebService {
     @ResponseWrapper(localName = "getBooksResponse", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.client.GetBooksResponse")
     public List<Book> getBooks(
             @WebParam(name = "conditions", targetNamespace = "")
-                    List<BookCondition> conditions);
+                    List<BookFieldValue> conditions);
 
 }

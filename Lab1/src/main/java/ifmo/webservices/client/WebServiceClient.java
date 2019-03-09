@@ -1,7 +1,7 @@
 package ifmo.webservices.client;
 
 import ifmo.webservices.Book;
-import ifmo.webservices.BookCondition;
+import ifmo.webservices.BookFieldValue;
 import ifmo.webservices.BookService;
 import ifmo.webservices.Field;
 
@@ -24,7 +24,7 @@ public class WebServiceClient {
     private String url;
     private BookService bookService;
 
-    private List<BookCondition> conditions = new ArrayList<BookCondition>();
+    private List<BookFieldValue> conditions = new ArrayList<BookFieldValue>();
 
     public WebServiceClient(String serviceUrl) {
         this.url = serviceUrl;
@@ -146,7 +146,7 @@ public class WebServiceClient {
         System.out.println("Print expected field value:");
         String value = in.readLine();
 
-        BookCondition condition = new BookCondition(fields[field - 1], value);
+        BookFieldValue condition = new BookFieldValue(fields[field - 1], value);
         this.conditions.add(condition);
 
         System.out.println("Condition saved: " + condition);
@@ -165,7 +165,7 @@ public class WebServiceClient {
 
         System.out.println("Saved conditions:");
 
-        for (BookCondition condition : this.conditions) {
+        for (BookFieldValue condition : this.conditions) {
             System.out.println(condition);
         }
     }

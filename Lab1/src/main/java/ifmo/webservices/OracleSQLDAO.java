@@ -39,10 +39,10 @@ public class OracleSQLDAO {
         return getBooks("select * from books");
     }
 
-    public List<Book> getBooksByFields(List<BookCondition> bookRequests) {
+    public List<Book> getBooksByFields(List<BookFieldValue> bookRequests) {
         StringBuilder query = new StringBuilder("select * from books where ");
 
-        for (BookCondition bookRequest : bookRequests) {
+        for (BookFieldValue bookRequest : bookRequests) {
             String equalExpression = String.format("%s = '%s'", bookRequest.getField(), bookRequest.getValue());
             query.append(equalExpression);
 
