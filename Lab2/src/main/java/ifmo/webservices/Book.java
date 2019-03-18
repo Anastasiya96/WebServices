@@ -1,47 +1,65 @@
 
 package ifmo.webservices;
 
+import java.awt.Image;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlMimeType;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Objects;
 
 
 /**
  * <p>Java class for book complex type.
  *
- * <p>The following schema fragment specifies the expected         content contained within this class.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="book"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="author" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
- *         &lt;element name="pages" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
- *         &lt;element name="publishing" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
- *         &lt;element name="year" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="book">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="author" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="pages" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="publishing" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="year" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="coverImage" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  *
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "book", propOrder = {
-        "author",
-        "id",
-        "name",
-        "pages",
-        "publishing",
-        "year"
+    "author",
+    "id",
+    "name",
+    "pages",
+    "publishing",
+    "year",
+    "coverImage"
 })
 public class Book {
+
+    @XmlElement(required = true)
+    protected String author;
+    protected int id;
+    @XmlElement(required = true)
+    protected String name;
+    protected int pages;
+    @XmlElement(required = true)
+    protected String publishing;
+    protected int year;
+    @XmlMimeType("image/jpeg")
+    protected Image coverImage;
+
+
     public Book(String author, int id, String name, int pages, String publishing, int year) {
         this.author = author;
         this.id = id;
@@ -54,24 +72,6 @@ public class Book {
     public Book() {
 
     }
-
-    @XmlElement(name = "author", required = true)
-    protected String author;
-
-    @XmlElement(name = "id", required = true)
-    protected int id;
-
-    @XmlElement(name = "name", required = true)
-    protected String name;
-
-    @XmlElement(name = "pages", required = true)
-    protected int pages;
-
-    @XmlElement(name = "publishing", required = true)
-    protected String publishing;
-
-    @XmlElement(name = "year", required = true)
-    protected int year;
 
     /**
      * Gets the value of the author property.
@@ -191,6 +191,30 @@ public class Book {
      */
     public void setYear(int value) {
         this.year = value;
+    }
+
+    /**
+     * Gets the value of the coverImage property.
+     *
+     * @return
+     *     possible object is
+     *     {@link Image }
+     *
+     */
+    public Image getCoverImage() {
+        return coverImage;
+    }
+
+    /**
+     * Sets the value of the coverImage property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link Image }
+     *
+     */
+    public void setCoverImage(Image value) {
+        this.coverImage = value;
     }
 
     /**

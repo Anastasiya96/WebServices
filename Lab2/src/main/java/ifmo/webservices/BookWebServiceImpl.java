@@ -1,5 +1,6 @@
 package ifmo.webservices;
 
+import java.awt.*;
 import java.util.List;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -37,5 +38,12 @@ public class BookWebServiceImpl implements BookWebService {
     public boolean deleteBook(@WebParam(name = "id") int id) {
         OracleSQLDAO dao = new OracleSQLDAO();
         return dao.deleteBook(id);
+    }
+
+    @WebMethod(operationName = "loadImage")
+    public boolean loadImage(@WebParam(name = "image") byte[] image) {
+        //OracleSQLDAO dao = new OracleSQLDAO();
+        //return dao.deleteBook(id);
+        return true;
     }
 }
