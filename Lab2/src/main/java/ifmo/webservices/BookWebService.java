@@ -99,6 +99,7 @@ public interface BookWebService {
     /**
      * 
      * @param image
+     * @param id
      * @return
      *     returns boolean
      */
@@ -107,6 +108,8 @@ public interface BookWebService {
     @RequestWrapper(localName = "loadImage", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.LoadImage")
     @ResponseWrapper(localName = "loadImageResponse", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.LoadImageResponse")
     public boolean loadImage(
+        @WebParam(name = "id", targetNamespace = "")
+        int id,
         @WebParam(name = "image", targetNamespace = "")
         byte[] image);
 

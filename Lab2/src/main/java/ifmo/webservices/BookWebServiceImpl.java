@@ -29,7 +29,8 @@ public class BookWebServiceImpl implements BookWebService {
     }
 
     @WebMethod(operationName = "modifyBook")
-    public boolean modifyBook(@WebParam(name = "id") int id, @WebParam(name = "newValues") List<BookFieldValue> newValues) {
+    public boolean modifyBook(@WebParam(name = "id") int id,
+                              @WebParam(name = "newValues") List<BookFieldValue> newValues) {
         OracleSQLDAO dao = new OracleSQLDAO();
         return dao.modifyBook(id, newValues);
     }
@@ -41,9 +42,9 @@ public class BookWebServiceImpl implements BookWebService {
     }
 
     @WebMethod(operationName = "loadImage")
-    public boolean loadImage(@WebParam(name = "image") byte[] image) {
-        //OracleSQLDAO dao = new OracleSQLDAO();
-        //return dao.deleteBook(id);
-        return true;
+    public boolean loadImage(@WebParam(name = "id") int id,
+                             @WebParam(name = "image") byte[] image) {
+        OracleSQLDAO dao = new OracleSQLDAO();
+        return dao.addCoverImage(id, image);
     }
 }

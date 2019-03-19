@@ -1,5 +1,6 @@
 package ifmo.webservices;
 
+import javax.sql.rowset.serial.SerialBlob;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,20 @@ public class OracleSQLDAO {
     public boolean deleteBook(int id) {
         String query = String.format("delete from books where id = %5d", id);
         return executeOperation(query);
+    }
+
+    public boolean addCoverImage(int id, byte[] bytes) {
+        try (Connection connection = ConnectionUtil.getConnection()) {
+            PreparedStatement pstm = connection.prepareStatement(
+                    "update books set cover_image = ? where id = " + id);
+
+            pstm.setBlob(1, new SerialBlob(bytes));
+            pstm.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return  true;
     }
 
     private boolean executeOperation(String query) {
