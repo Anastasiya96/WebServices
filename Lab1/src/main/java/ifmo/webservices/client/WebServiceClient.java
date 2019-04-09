@@ -19,7 +19,7 @@ enum MenuOption {Add, Print, Clear, Find, Exit}
 public class WebServiceClient {
 
     private static final String standaloneUrl = "http://localhost:8081/BookService?wsdl";
-    private static final String j2eeUrl = "http://localhost:8082/WebService1/BookService?wsdl";
+    private static final String j2eeUrl = "http://localhost:8082/WebService1-1.0-SNAPSHOT/BookService?wsdl";
 
     private String url;
     private BookService bookService;
@@ -32,7 +32,7 @@ public class WebServiceClient {
 
     public static void main(String[] args) throws MalformedURLException {
         try {
-            WebServiceClient client = new WebServiceClient(standaloneUrl);
+            WebServiceClient client = new WebServiceClient(j2eeUrl);
             client.startListening();
 
         } catch (WebServiceException ex) {

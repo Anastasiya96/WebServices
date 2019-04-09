@@ -10,11 +10,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class OracleSQLDAO {
+    private Connection connection;
+
+    public OracleSQLDAO(Connection connection) {
+        this.connection = connection;
+    }
+
     private List<Book> getBooks(String query) {
         List<Book> books = new ArrayList<Book>();
 
-        try (Connection connection = ConnectionUtil.getConnection()) {
-
+        try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -29,6 +34,7 @@ public class OracleSQLDAO {
                 Book book = new Book(author, id, name, pages, publishing, year);
                 books.add(book);
             }
+            connection.close();
         } catch (SQLException ex) {
             Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
