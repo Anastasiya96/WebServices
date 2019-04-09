@@ -25,3 +25,18 @@ Implemented:
 
 
 CRUD operations added.
+
+
+
+## Lab №3
+
+
+Errors handling added.
+
+
+## Lab №4
+
+
+Implemented:
+- REST standalone-application 
+- REST J2EE-application based on Glassfish5 server
