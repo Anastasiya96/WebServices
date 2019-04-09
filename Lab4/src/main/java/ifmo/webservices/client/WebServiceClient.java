@@ -22,12 +22,12 @@ enum MenuOption {Add, Print, Clear, Find, Exit}
 public class WebServiceClient {
 
     private static final String standaloneUrl = "http://localhost:8081/rest/books";
-    private static final String j2eeUrl = "http://localhost:8082/WebService1-1.0-SNAPSHOT/BookService?wsdl";
+    private static final String j2eeUrl = "http://localhost:8082/WebService1-1.0-SNAPSHOT/rest/books";
 
     private Client client;
     private String url;
 
-    private List<BookFieldValue> conditions = new ArrayList<BookFieldValue>();
+    private List<BookFieldValue> conditions = new ArrayList<>();
 
     public WebServiceClient(Client client, String url) {
         this.client = client;
@@ -36,7 +36,7 @@ public class WebServiceClient {
 
     public static void main(String[] args) throws MalformedURLException {
         try {
-            WebServiceClient client = new WebServiceClient(Client.create(), standaloneUrl);
+            WebServiceClient client = new WebServiceClient(Client.create(), j2eeUrl);
             client.startListening();
 
         } catch (WebServiceException ex) {
@@ -154,13 +154,14 @@ public class WebServiceClient {
     }
 
     private void findResults() {
-        WebResource webResource = client.resource(standaloneUrl);
-        for(BookFieldValue condition : conditions) {
-            webResource = webResource.queryParam(condition.getField().toString(), condition.getValue().toString());
+        WebResource webResource = client.resource(this.url);
+        for (BookFieldValue condition : conditions) {
+            webResource = webResource.queryParam(
+                    condition.getField().toString(),
+                    condition.getValue().toString());
         }
 
-        ClientResponse response =
-                webResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        ClientResponse response = webResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
         if (response.getStatus() != ClientResponse.Status.OK.getStatusCode()) {
             throw new IllegalStateException("Request failed");
         }
