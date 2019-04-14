@@ -15,7 +15,7 @@ import javax.jws.WebService;
 @WebService(name = "BookWebService", serviceName = "BookService")
 @Singleton
 public class BookWebServiceImpl implements BookWebService {
-    private final int MAX_REQUESTS_COUNT = 1;
+    private final int MAX_REQUESTS_COUNT = 20;
     private int requestsCount = 0;
 
     private synchronized void decreaseRequests() {
