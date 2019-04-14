@@ -3,37 +3,47 @@ package ifmo.webservices;
 import ifmo.webservices.errors.*;
 
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.inject.Singleton;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
 @WebService(name = "BookWebService", serviceName = "BookService")
+@Singleton
 public class BookWebServiceImpl implements BookWebService {
+    private final int MAX_REQUESTS_COUNT = 1;
+    private int requestsCount = 0;
 
-    @WebMethod(operationName = "getAllBooks")
-    public List<Book> getAllBooks() throws DatabaseException {
-        OracleSQLDAO dao = new OracleSQLDAO();
-        try {
-            return dao.getAllBooks();
-        } catch (SQLException e) {
-            Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, e);
-            throw new DatabaseException(e.getMessage(), BookServiceFault.defaultInstance());
+    private synchronized void decreaseRequests() {
+        if (requestsCount > 0) {
+            requestsCount--;
         }
+    }
+
+    private synchronized void increaseRequests() throws ThrottlingException {
+        if (requestsCount == MAX_REQUESTS_COUNT) {
+            throw new ThrottlingException("Maximum requests count of " + MAX_REQUESTS_COUNT + " exceeded",
+                    BookServiceFault.defaultInstance());
+        }
+        requestsCount++;
     }
 
     @WebMethod(operationName = "getBooks")
     public List<Book> getBooks(@WebParam(name = "conditions") List<BookFieldValue> conditions)
-            throws DatabaseException {
+            throws DatabaseException, ThrottlingException {
+        increaseRequests();
         OracleSQLDAO dao = new OracleSQLDAO();
         try {
-            return dao.getBooksByFields(conditions);
+            List<Book> result = dao.getBooksByFields(conditions);
+            decreaseRequests();
+            return result;
         } catch (SQLException e) {
             Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, e);
+            decreaseRequests();
             throw new DatabaseException(e.getMessage(), BookServiceFault.defaultInstance());
         }
     }
@@ -43,7 +53,11 @@ public class BookWebServiceImpl implements BookWebService {
             throws IllegalNameException,
             IllegalAuthorException,
             IllegalPagesException,
-            IllegalYearException, DatabaseException {
+            IllegalYearException,
+            DatabaseException,
+            ThrottlingException {
+
+        increaseRequests();
 
         checkName(book.getName());
         checkAuthor(book.getAuthor());
@@ -52,9 +66,12 @@ public class BookWebServiceImpl implements BookWebService {
 
         OracleSQLDAO dao = new OracleSQLDAO();
         try {
-            return dao.addBook(book);
+            int id = dao.addBook(book);
+            decreaseRequests();
+            return id;
         } catch (SQLException e) {
             Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, e);
+            decreaseRequests();
             throw new DatabaseException(e.getMessage(), BookServiceFault.defaultInstance());
         }
     }
@@ -65,7 +82,11 @@ public class BookWebServiceImpl implements BookWebService {
             IllegalAuthorException,
             IllegalPagesException,
             IllegalYearException,
-            BookNotFoundException, DatabaseException {
+            BookNotFoundException,
+            DatabaseException,
+            ThrottlingException {
+
+        increaseRequests();
 
         for (BookFieldValue fieldValue : newValues) {
             switch (fieldValue.getField()) {
@@ -87,21 +108,32 @@ public class BookWebServiceImpl implements BookWebService {
         OracleSQLDAO dao = new OracleSQLDAO();
         try {
             checkExists(dao, id);
-            return dao.modifyBook(id, newValues);
+            boolean success = dao.modifyBook(id, newValues);
+            decreaseRequests();
+            return success;
         } catch (SQLException e) {
             Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, e);
+            decreaseRequests();
             throw new DatabaseException(e.getMessage(), BookServiceFault.defaultInstance());
         }
     }
 
     @WebMethod(operationName = "deleteBook")
-    public boolean deleteBook(@WebParam(name = "id") int id) throws BookNotFoundException, DatabaseException {
+    public boolean deleteBook(@WebParam(name = "id") int id)
+            throws BookNotFoundException,
+            DatabaseException,
+            ThrottlingException {
+
+        increaseRequests();
         OracleSQLDAO dao = new OracleSQLDAO();
         try {
             checkExists(dao, id);
-            return dao.deleteBook(id);
+            boolean success = dao.deleteBook(id);
+            decreaseRequests();
+            return success;
         } catch (SQLException e) {
             Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, e);
+            decreaseRequests();
             throw new DatabaseException(e.getMessage(), BookServiceFault.defaultInstance());
         }
     }
@@ -132,12 +164,12 @@ public class BookWebServiceImpl implements BookWebService {
     protected void checkPages(String pages) throws IllegalPagesException {
         int pagesInt = -1;
         try {
-           pagesInt = Integer.parseInt(pages);
+            pagesInt = Integer.parseInt(pages);
         } catch (NumberFormatException e) {
             throw new IllegalPagesException("Pages should be number",
                     BookServiceFault.defaultInstance());
         }
-       checkPages(pagesInt);
+        checkPages(pagesInt);
     }
 
     protected void checkYear(String year) throws IllegalYearException {

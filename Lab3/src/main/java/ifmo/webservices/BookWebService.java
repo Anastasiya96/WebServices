@@ -25,19 +25,6 @@ import javax.xml.ws.ResponseWrapper;
     ObjectFactory.class
 })
 public interface BookWebService {
-
-
-    /**
-     *
-     * @return
-     *     returns java.util.List<ifmo.webservices.Book>
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getAllBooks", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.client.GetAllBooks")
-    @ResponseWrapper(localName = "getAllBooksResponse", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.client.GetAllBooksResponse")
-    public List<Book> getAllBooks() throws DatabaseException;
-
     /**
      *
      * @param conditions
@@ -50,7 +37,7 @@ public interface BookWebService {
     @ResponseWrapper(localName = "getBooksResponse", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.client.GetBooksResponse")
     public List<Book> getBooks(
             @WebParam(name = "conditions", targetNamespace = "")
-                    List<BookFieldValue> conditions) throws DatabaseException;
+                    List<BookFieldValue> conditions) throws DatabaseException, ThrottlingException;
 
     /**
      *
@@ -67,7 +54,7 @@ public interface BookWebService {
             @WebParam(name = "id", targetNamespace = "")
                     int id,
             @WebParam(name = "newValues", targetNamespace = "")
-                    List<BookFieldValue> newValues) throws IllegalNameException, IllegalAuthorException, IllegalPagesException, IllegalYearException, BookNotFoundException, DatabaseException;
+                    List<BookFieldValue> newValues) throws IllegalNameException, IllegalAuthorException, IllegalPagesException, IllegalYearException, BookNotFoundException, DatabaseException, ThrottlingException;
 
     /**
      *
@@ -81,7 +68,7 @@ public interface BookWebService {
     @ResponseWrapper(localName = "addBookResponse", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.client.AddBookResponse")
     public int addBook(
             @WebParam(name = "book", targetNamespace = "")
-                    Book book) throws IllegalNameException, IllegalAuthorException, IllegalPagesException, IllegalYearException, DatabaseException;
+                    Book book) throws IllegalNameException, IllegalAuthorException, IllegalPagesException, IllegalYearException, DatabaseException, ThrottlingException;
 
     /**
      *
@@ -95,6 +82,6 @@ public interface BookWebService {
     @ResponseWrapper(localName = "deleteBookResponse", targetNamespace = "http://webservices.ifmo/", className = "ifmo.webservices.client.DeleteBookResponse")
     public boolean deleteBook(
             @WebParam(name = "id", targetNamespace = "")
-                    int id) throws BookNotFoundException, DatabaseException;
+                    int id) throws BookNotFoundException, DatabaseException, ThrottlingException;
 
 }

@@ -5,12 +5,12 @@ import ifmo.webservices.BookFieldValue;
 import ifmo.webservices.BookService;
 import ifmo.webservices.Field;
 import ifmo.webservices.errors.DatabaseException;
+import ifmo.webservices.errors.ThrottlingException;
 
 import javax.xml.ws.WebServiceException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +81,7 @@ public class WebServiceClient {
         return option;
     }
 
-    private void processOption(BufferedReader in) throws IOException, DatabaseException {
+    private void processOption(BufferedReader in) throws IOException, DatabaseException, ThrottlingException {
         int option = readIntValue(in);
 
         if (option < 1 || option > MenuOption.values().length) {
@@ -237,7 +237,7 @@ public class WebServiceClient {
         }
     }
 
-    private void findResults() throws DatabaseException {
+    private void findResults() throws DatabaseException, ThrottlingException {
         List<Book> books = this.bookService.getBookWebServicePort().getBooks(this.conditions);
         printBooks(books);
     }
