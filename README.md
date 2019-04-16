@@ -24,14 +24,14 @@ Implemented:
 ## Lab №2
 
 
-CRUD operations added.
+CRUD operations for SOAP service added.
 
 
 
 ## Lab №3
 
 
-Errors handling added.
+Errors handling for SOAP service added.
 
 
 ## Lab №4
@@ -40,3 +40,9 @@ Errors handling added.
 Implemented:
 - REST standalone-application 
 - REST J2EE-application based on Glassfish5 server
+
+
+## Lab №5
+
+
+CRUD operations for REST service added.
