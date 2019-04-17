@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 enum MenuOption {AddField, Add, Delete, Modify, Print, Clear, Find, Exit}
 
@@ -169,12 +171,11 @@ public class WebServiceClient {
 
     private void add(BufferedReader in) {
         try {
-            String jsonString = inputFields(in);
             WebResource webResource = client.resource(this.url);
 
             ClientResponse response = webResource
                     .type(MediaType.APPLICATION_JSON)
-                    .post(ClientResponse.class, jsonString);
+                    .post(ClientResponse.class, inputFields(in));
 
             if (response.getStatus() != ClientResponse.Status.OK.getStatusCode()) {
                 throw new IllegalStateException("Request failed");
@@ -188,9 +189,9 @@ public class WebServiceClient {
         }
     }
 
-    private String inputFields (BufferedReader in) throws IOException {
+    private Map<String,Object> inputFields (BufferedReader in) throws IOException {
         Field[] fields = Field.values();
-        StringBuilder jsonString = new StringBuilder("{");
+        Map<String,Object> body = new HashMap<>();
 
         for (int i = 0; i < fields.length; i++) {
             if (fields[i] != Field.ID) {
@@ -198,20 +199,12 @@ public class WebServiceClient {
                 String value = in.readLine();
 
                 if (!value.isEmpty()) {
-                    jsonString.append("\"");
-                    jsonString.append(fields[i]);
-                    jsonString.append("\":\"");
-                    jsonString.append(value);
-                    jsonString.append("\"");
-                    if(i != fields.length - 1) {
-                        jsonString.append(",");
-                    }
+                    body.put(fields[i].toString(), value);
                 }
             }
         }
-        jsonString.append("}");
 
-        return jsonString.toString();
+        return body;
     }
 
     private void delete(BufferedReader in) {
@@ -224,7 +217,7 @@ public class WebServiceClient {
             WebResource webResource = client.resource(this.url);
             webResource = webResource.queryParam("id", String.valueOf(id));
 
-            ClientResponse response = webResource.accept(MediaType.TEXT_PLAIN).delete(ClientResponse.class);
+            ClientResponse response = webResource.delete(ClientResponse.class);
             if (response.getStatus() != ClientResponse.Status.OK.getStatusCode()) {
                 throw new IllegalStateException("Request failed");
             }
@@ -248,12 +241,14 @@ public class WebServiceClient {
                 return;
             }
 
-            String jsonString = inputFields(in);
             WebResource webResource = client.resource(this.url);
 
-            ClientResponse response = webResource.accept(MediaType.TEXT_PLAIN)
+            Map<String, Object> body = inputFields(in);
+            body.put("id", id);
+
+            ClientResponse response = webResource
                     .type(MediaType.APPLICATION_JSON)
-                    .put(ClientResponse.class, jsonString);
+                    .put(ClientResponse.class, body);
 
             if (response.getStatus() != ClientResponse.Status.OK.getStatusCode()) {
                 throw new IllegalStateException("Request failed");
