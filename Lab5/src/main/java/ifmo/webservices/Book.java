@@ -7,14 +7,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import java.util.Objects;
 
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "book", propOrder = {
-    "author",
-    "id",
-    "name",
-    "pages",
-    "publishing",
-    "year"
+        "author",
+        "id",
+        "name",
+        "pages",
+        "publishing",
+        "year"
 })
 public class Book {
     public Book(String author, int id, String name, int pages, String publishing, int year) {
@@ -50,11 +51,11 @@ public class Book {
 
     /**
      * Gets the value of the author property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getAuthor() {
         return author;
@@ -62,11 +63,11 @@ public class Book {
 
     /**
      * Sets the value of the author property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setAuthor(String value) {
         this.author = value;
@@ -74,7 +75,7 @@ public class Book {
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      */
     public int getId() {
         return id;
@@ -82,7 +83,7 @@ public class Book {
 
     /**
      * Sets the value of the id property.
-     * 
+     *
      */
     public void setId(int value) {
         this.id = value;
@@ -90,11 +91,11 @@ public class Book {
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getName() {
         return name;
@@ -102,11 +103,11 @@ public class Book {
 
     /**
      * Sets the value of the name property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setName(String value) {
         this.name = value;
@@ -114,7 +115,7 @@ public class Book {
 
     /**
      * Gets the value of the pages property.
-     * 
+     *
      */
     public int getPages() {
         return pages;
@@ -122,7 +123,7 @@ public class Book {
 
     /**
      * Sets the value of the pages property.
-     * 
+     *
      */
     public void setPages(int value) {
         this.pages = value;
@@ -130,11 +131,11 @@ public class Book {
 
     /**
      * Gets the value of the publishing property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getPublishing() {
         return publishing;
@@ -142,11 +143,11 @@ public class Book {
 
     /**
      * Sets the value of the publishing property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setPublishing(String value) {
         this.publishing = value;
@@ -154,7 +155,7 @@ public class Book {
 
     /**
      * Gets the value of the year property.
-     * 
+     *
      */
     public int getYear() {
         return year;
@@ -162,10 +163,24 @@ public class Book {
 
     /**
      * Sets the value of the year property.
-     * 
+     *
      */
     public void setYear(int value) {
         this.year = value;
+    }
+
+    /**
+     * Sets the value of the property.
+     *
+     */
+    public void setField(Field field, String value) {
+        switch (field) {
+            case NAME: setName(value); break;
+            case PUBLISHING: setPublishing(value); break;
+            case AUTHOR: setAuthor(value); break;
+            case YEAR: setYear(Integer.parseInt(value)); break;
+            case PAGES: setPages(Integer.parseInt(value)); break;
+        }
     }
 
     @Override

@@ -7,7 +7,6 @@ import ifmo.webservices.Book;
 import ifmo.webservices.BookFieldValue;
 import ifmo.webservices.Field;
 import com.sun.jersey.api.client.ClientResponse;
-
 import javax.ws.rs.core.MediaType;
 import javax.xml.ws.WebServiceException;
 import java.io.BufferedReader;
@@ -17,12 +16,11 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-enum MenuOption {Add, Print, Clear, Find, Exit}
+enum MenuOption {AddField, Add, Delete, Modify, Print, Clear, Find, Exit}
 
 public class WebServiceClient {
 
     private static final String standaloneUrl = "http://localhost:8081/rest/books";
-    private static final String j2eeUrl = "http://localhost:8082/WebService1-1.0-SNAPSHOT/rest/books";
 
     private Client client;
     private String url;
@@ -34,7 +32,7 @@ public class WebServiceClient {
         this.url = url;
     }
 
-    public static void main(String[] args) throws MalformedURLException {
+    public static void main(String[] args) {
         try {
             WebServiceClient client = new WebServiceClient(Client.create(), standaloneUrl);
             client.startListening();
@@ -71,21 +69,21 @@ public class WebServiceClient {
         }
     }
 
-    private int readOption(BufferedReader in) throws IOException {
+    private int readIntValue(BufferedReader in) throws IOException {
         int option = -1;
 
         String input = in.readLine();
         try {
             option = Integer.parseInt(input);
         } catch (NumberFormatException e) {
-            System.err.println("Wrong option");
+            return option;
         }
 
         return option;
     }
 
     private void processOption(BufferedReader in) throws IOException {
-        int option = readOption(in);
+        int option = readIntValue(in);
 
         if (option < 1 || option > MenuOption.values().length) {
             System.err.println("Wrong option");
@@ -95,8 +93,17 @@ public class WebServiceClient {
         MenuOption menuOption = MenuOption.values()[option - 1];
 
         switch (menuOption) {
-            case Add:
+            case AddField:
                 addCondition(in);
+                break;
+            case Add:
+                add(in);
+                break;
+            case Delete:
+                delete(in);
+                break;
+            case Modify:
+                modify(in);
                 break;
             case Find:
                 findResults();
@@ -115,8 +122,14 @@ public class WebServiceClient {
 
     private String getOptionText(MenuOption menuOption) {
         switch (menuOption) {
-            case Add:
+            case AddField:
                 return "Add search condition";
+            case Add:
+                return "Add new book";
+            case Delete:
+                return "Delete book";
+            case Modify:
+                return "Modify book";
             case Find:
                 return "Find results";
             case Print:
@@ -138,10 +151,11 @@ public class WebServiceClient {
             System.out.printf("%2d. %s\n", i + 1, fields[i]);
         }
 
-        int field = readOption(in);
+        int field = readIntValue(in);
 
         if (field < 1 || field > fields.length) {
             System.err.println("Wrong option");
+            return;
         }
 
         System.out.println("Print expected field value:");
@@ -151,6 +165,139 @@ public class WebServiceClient {
         this.conditions.add(condition);
 
         System.out.println("Condition saved: " + condition);
+    }
+
+    private void add(BufferedReader in) {
+        try {
+            String jsonString = inputFields(in);
+            WebResource webResource = client.resource(this.url);
+
+            ClientResponse response = webResource
+                    .type(MediaType.APPLICATION_JSON)
+                    .post(ClientResponse.class, jsonString);
+
+            if (response.getStatus() != ClientResponse.Status.OK.getStatusCode()) {
+                throw new IllegalStateException("Request failed");
+            }
+
+            GenericType<Integer> type = new GenericType<Integer>() {};
+            int id = response.getEntity(type);
+            System.out.println("Book added: id = " + id);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private String inputFields (BufferedReader in) throws IOException {
+        Field[] fields = Field.values();
+        StringBuilder jsonString = new StringBuilder("{");
+
+        for (int i = 0; i < fields.length; i++) {
+            if (fields[i] != Field.ID) {
+                System.out.printf("Print '%s' value (to skip press enter):\n", fields[i]);
+                String value = in.readLine();
+
+                if (!value.isEmpty()) {
+                    jsonString.append("\"");
+                    jsonString.append(fields[i]);
+                    jsonString.append("\":\"");
+                    jsonString.append(value);
+                    jsonString.append("\"");
+                    if(i != fields.length - 1) {
+                        jsonString.append(",");
+                    }
+                }
+            }
+        }
+        jsonString.append("}");
+
+        return jsonString.toString();
+    }
+
+    private void delete(BufferedReader in) {
+        try {
+            int id = findBookById(in);
+            if (id < 0) {
+                return;
+            }
+
+            WebResource webResource = client.resource(this.url);
+            webResource = webResource.queryParam("id", String.valueOf(id));
+
+            ClientResponse response = webResource.accept(MediaType.TEXT_PLAIN).delete(ClientResponse.class);
+            if (response.getStatus() != ClientResponse.Status.OK.getStatusCode()) {
+                throw new IllegalStateException("Request failed");
+            }
+
+            GenericType<Boolean> type = new GenericType<Boolean>() {};
+            boolean success = response.getEntity(type);
+            if (success) {
+                System.out.println("Book deleted");
+            } else {
+                System.out.println("Book deletion failed");
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private void modify(BufferedReader in) {
+        try {
+            int id = findBookById(in);
+            if (id < 0) {
+                return;
+            }
+
+            String jsonString = inputFields(in);
+            WebResource webResource = client.resource(this.url);
+
+            ClientResponse response = webResource.accept(MediaType.TEXT_PLAIN)
+                    .type(MediaType.APPLICATION_JSON)
+                    .put(ClientResponse.class, jsonString);
+
+            if (response.getStatus() != ClientResponse.Status.OK.getStatusCode()) {
+                throw new IllegalStateException("Request failed");
+            }
+
+            GenericType<Boolean> type = new GenericType<Boolean>() {};
+            boolean success = response.getEntity(type);
+            if (success) {
+                System.out.println("Book modified");
+            } else {
+                System.out.println("Book modification failed");
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private int findBookById(BufferedReader in) throws IOException {
+        System.out.println("Print id:");
+        int id = readIntValue(in);
+
+        if (id < 0) {
+            System.err.println("Wrong id value");
+            return -1;
+        }
+
+        WebResource webResource = client.resource(this.url);
+        webResource = webResource.queryParam("id", String.valueOf(id));
+
+        ClientResponse response = webResource.accept(MediaType.APPLICATION_JSON).get(ClientResponse.class);
+        if (response.getStatus() != ClientResponse.Status.OK.getStatusCode()) {
+            throw new IllegalStateException("Request failed");
+        }
+
+        GenericType<List<Book>> type = new GenericType<List<Book>>() {};
+        List<Book> books = response.getEntity(type);
+
+        if (books.size() == 0) {
+            System.err.println("Book with such id was not found");
+            return -1;
+        } else {
+            System.out.println("Book found: " + books.get(0));
+            return id;
+        }
     }
 
     private void findResults() {

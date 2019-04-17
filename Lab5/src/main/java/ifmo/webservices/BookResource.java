@@ -32,6 +32,7 @@ public class BookResource {
 
     @POST
     @Consumes({ MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_JSON })
     public int addBook(Book book) {
         OracleSQLDAO dao = new OracleSQLDAO(ConnectionUtil.getConnection());
         return dao.addBook(book);

@@ -38,7 +38,12 @@ public class OracleSQLDAO {
         return books;
     }
 
+    public List<Book> getAllBooks() {
+        return getBooks("select * from books");
+    }
+
     public List<Book> getBooksByFields(List<BookFieldValue> bookRequests) {
+        if(bookRequests.size() == 0) return getAllBooks();
         StringBuilder query = new StringBuilder("select * from books where ");
 
         for (BookFieldValue bookRequest : bookRequests) {

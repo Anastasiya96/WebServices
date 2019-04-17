@@ -36,7 +36,7 @@ public class WebServiceClient {
 
     public static void main(String[] args) throws MalformedURLException {
         try {
-            WebServiceClient client = new WebServiceClient(Client.create(), j2eeUrl);
+            WebServiceClient client = new WebServiceClient(Client.create(), standaloneUrl);
             client.startListening();
 
         } catch (WebServiceException ex) {
