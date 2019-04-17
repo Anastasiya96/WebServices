@@ -31,7 +31,6 @@ public class OracleSQLDAO {
                 Book book = new Book(author, id, name, pages, publishing, year);
                 books.add(book);
             }
-            connection.close();
         } catch (SQLException ex) {
             Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -43,7 +42,7 @@ public class OracleSQLDAO {
     }
 
     public List<Book> getBooksByFields(List<BookFieldValue> bookRequests) {
-        if(bookRequests.size() == 0) return getAllBooks();
+        if (bookRequests.size() == 0) return getAllBooks();
         StringBuilder query = new StringBuilder("select * from books where ");
 
         for (BookFieldValue bookRequest : bookRequests) {
@@ -68,7 +67,7 @@ public class OracleSQLDAO {
                     book.getAuthor(),
                     book.getYear(),
                     book.getPages()),
-                    new String[] {"id"});
+                    new String[]{"id"});
 
             int i = pstm.executeUpdate();
             if (i > 0) {
@@ -77,7 +76,6 @@ public class OracleSQLDAO {
                     id = Integer.parseInt(rs.getString(1));
                 }
             }
-            connection.close();
         } catch (SQLException ex) {
             Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -115,7 +113,6 @@ public class OracleSQLDAO {
         try {
             Statement stmt = connection.createStatement();
             stmt.executeQuery(query);
-            connection.close();
         } catch (SQLException ex) {
             Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, ex);
             return false;

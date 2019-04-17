@@ -46,3 +46,9 @@ Implemented:
 
 
 CRUD operations for REST service added.
+
+
+## Lab №6
+
+
+Errors handling for REST service added.
