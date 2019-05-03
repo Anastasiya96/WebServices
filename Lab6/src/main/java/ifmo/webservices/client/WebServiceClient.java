@@ -13,16 +13,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 enum MenuOption {AddField, Add, Delete, Modify, Print, Clear, Find, Exit}
 
 public class WebServiceClient {
 
     private static final String standaloneUrl = "http://localhost:8081/rest/books";
+
+    private static final String login = "example";
+    private static final String password = "dF48rElf";
 
     private Client client;
     private String url;
@@ -174,6 +174,7 @@ public class WebServiceClient {
             WebResource webResource = client.resource(this.url);
 
             ClientResponse response = webResource
+                    .header("Authorization", getAuthHeader())
                     .type(MediaType.APPLICATION_JSON)
                     .post(ClientResponse.class, inputFields(in));
 
@@ -217,7 +218,9 @@ public class WebServiceClient {
             WebResource webResource = client.resource(this.url);
             webResource = webResource.queryParam("id", String.valueOf(id));
 
-            ClientResponse response = webResource.delete(ClientResponse.class);
+            ClientResponse response = webResource
+                    .header("Authorization", getAuthHeader())
+                    .delete(ClientResponse.class);
             if (response.getStatus() != ClientResponse.Status.OK.getStatusCode()) {
                 throw new IllegalStateException("Request failed");
             }
@@ -247,6 +250,7 @@ public class WebServiceClient {
             body.put("id", id);
 
             ClientResponse response = webResource
+                    .header("Authorization", getAuthHeader())
                     .type(MediaType.APPLICATION_JSON)
                     .put(ClientResponse.class, body);
 
@@ -339,5 +343,11 @@ public class WebServiceClient {
             System.out.println(book);
         }
         System.out.println("Total books: " + books.size());
+    }
+
+    private String getAuthHeader() {
+        String authString = login + ":" + password;
+        String authStringEnc = Base64.getEncoder().encodeToString(authString.getBytes());
+        return "Basic " + authStringEnc;
     }
 }

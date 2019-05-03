@@ -1,18 +1,26 @@
 package ifmo.webservices;
 
+import com.sun.jersey.multipart.FormDataParam;
 import ifmo.webservices.errors.*;
-
+import ifmo.webservices.errors.ForbiddenException;
+import java.io.*;
+import java.nio.file.Files;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+
 @Path("/books")
 @Produces({MediaType.APPLICATION_JSON})
 public class BookResource {
+
+    private static final String login = "example";
+    private static final String password = "dF48rElf";
+
     @GET
     public List<Book> getBooks(
             @QueryParam("author") String author,
@@ -43,12 +51,16 @@ public class BookResource {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public int addBook(Book book)
+    public int addBook(Book book, @HeaderParam("authorization") String authString)
             throws IllegalNameException,
             IllegalAuthorException,
             IllegalPagesException,
-            IllegalYearException, DatabaseException {
+            IllegalYearException,
+            DatabaseException,
+            UnauthorizedException,
+            ForbiddenException {
         try {
+            checkAuthenticated(authString);
             checkName(book.getName());
             checkAuthor(book.getAuthor());
             checkPages(book.getPages());
@@ -64,14 +76,18 @@ public class BookResource {
 
     @PUT
     @Consumes({MediaType.APPLICATION_JSON})
-    public boolean modifyBook(Book book)
+    public boolean modifyBook(Book book, @HeaderParam("authorization") String authString)
             throws IllegalNameException,
             IllegalAuthorException,
             IllegalPagesException,
             IllegalYearException,
-            BookNotFoundException, DatabaseException {
+            BookNotFoundException,
+            DatabaseException,
+            UnauthorizedException,
+            ForbiddenException {
 
         try {
+            checkAuthenticated(authString);
             checkName(book.getName());
             checkAuthor(book.getAuthor());
             checkPages(book.getPages());
@@ -96,15 +112,40 @@ public class BookResource {
     }
 
     @DELETE
-    public boolean deleteBook(@QueryParam("id") int id) throws BookNotFoundException, DatabaseException {
+    public boolean deleteBook(@QueryParam("id") int id, @HeaderParam("authorization") String authString)
+            throws BookNotFoundException,
+            DatabaseException,
+            UnauthorizedException,
+            ForbiddenException {
         try {
             OracleSQLDAO dao = new OracleSQLDAO(ConnectionUtil.getConnection());
+            checkAuthenticated(authString);
             checkExists(dao, id);
             return dao.deleteBook(id);
         } catch (SQLException e) {
             Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, e);
             throw new DatabaseException(e.getMessage());
         }
+    }
+
+    @POST
+    @Path("/upload")
+    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    public boolean uploadFileWithData(
+            @FormDataParam("file") InputStream fileInputStream,
+            @HeaderParam("authorization") String authString) throws UnauthorizedException, ForbiddenException {
+
+        checkAuthenticated(authString);
+
+        try {
+            File file = new File("src/main/resources/" +
+                    new SimpleDateFormat("ddMMyy-hhmmss.SSS").format(new Date()));
+
+            Files.copy(fileInputStream, file.toPath());
+        } catch (IOException e) {
+            Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return true;
     }
 
     protected void checkExists(OracleSQLDAO dao, final int id) throws BookNotFoundException, SQLException {
@@ -136,6 +177,27 @@ public class BookResource {
     protected void checkYear(int year) throws IllegalYearException {
         if (year <= 0) {
             throw new IllegalYearException("Year should be greater than zero");
+        }
+    }
+
+    protected void checkAuthenticated(String authString) throws UnauthorizedException, ForbiddenException {
+        if (authString == null || authString.equals("")) {
+            throw new UnauthorizedException("Authorization required for CRUD operations");
+        }
+
+        try {
+            String[] authParts = authString.split("\\s+");
+            String authInfo = authParts[1];
+
+            String decodedString = new String(Base64.getDecoder().decode(authInfo));
+
+            authParts = decodedString.split(":");
+
+            if (!authParts[0].equals(login) || !authParts[1].equals(password)) {
+                throw new ForbiddenException("Wrong login/password");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new ForbiddenException("Wrong login/password");
         }
     }
 }
