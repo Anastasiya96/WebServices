@@ -3,19 +3,21 @@ package ifmo.webservices.client;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.multipart.MultiPart;
+import com.sun.jersey.multipart.file.FileDataBodyPart;
 import ifmo.webservices.Book;
 import ifmo.webservices.BookFieldValue;
 import ifmo.webservices.Field;
 import com.sun.jersey.api.client.ClientResponse;
+
 import javax.ws.rs.core.MediaType;
 import javax.xml.ws.WebServiceException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.util.*;
 
-enum MenuOption {AddField, Add, Delete, Modify, Print, Clear, Find, Exit}
+enum MenuOption {AddField, Add, Delete, Modify, Print, Clear, Find, Upload, Exit}
 
 public class WebServiceClient {
 
@@ -116,6 +118,9 @@ public class WebServiceClient {
             case Clear:
                 clearConditions();
                 break;
+            case Upload:
+                uploadFile(in);
+                break;
             case Exit:
                 exit();
                 break;
@@ -138,6 +143,8 @@ public class WebServiceClient {
                 return "Print saved conditions";
             case Clear:
                 return "Clear saved conditions";
+            case Upload:
+                return "Upload file";
             case Exit:
                 return "Exit";
             default:
@@ -190,9 +197,9 @@ public class WebServiceClient {
         }
     }
 
-    private Map<String,Object> inputFields (BufferedReader in) throws IOException {
+    private Map<String, Object> inputFields(BufferedReader in) throws IOException {
         Field[] fields = Field.values();
-        Map<String,Object> body = new HashMap<>();
+        Map<String, Object> body = new HashMap<>();
 
         for (int i = 0; i < fields.length; i++) {
             if (fields[i] != Field.ID) {
@@ -264,6 +271,32 @@ public class WebServiceClient {
                 System.out.println("Book modified");
             } else {
                 System.out.println("Book modification failed");
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private void uploadFile(BufferedReader in) throws IOException {
+        System.out.println("Print file path:");
+        String path = in.readLine();
+
+        try {
+            FileDataBodyPart filePart = new FileDataBodyPart("file", new File(path));
+            MultiPart multipartEntity = new FormDataMultiPart().bodyPart(filePart);
+
+            WebResource webResource = client.resource(this.url + "/upload");
+            ClientResponse response = webResource
+                    .header("Authorization", getAuthHeader())
+                    .type(MediaType.MULTIPART_FORM_DATA_TYPE)
+                    .post(ClientResponse.class, multipartEntity);
+
+            GenericType<Boolean> type = new GenericType<Boolean>() {};
+            boolean success = response.getEntity(type);
+            if (success) {
+                System.out.println("File uploaded");
+            } else {
+                System.out.println("File upload failed");
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());

@@ -144,6 +144,7 @@ public class BookResource {
             Files.copy(fileInputStream, file.toPath());
         } catch (IOException e) {
             Logger.getLogger(OracleSQLDAO.class.getName()).log(Level.SEVERE, null, e);
+            return false;
         }
         return true;
     }
