@@ -6,9 +6,9 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class ForbiddenExceptionMapper implements ExceptionMapper<IllegalYearException> {
+public class ForbiddenExceptionMapper implements ExceptionMapper<ForbiddenException> {
     @Override
-    public Response toResponse(IllegalYearException e) {
+    public Response toResponse(ForbiddenException e) {
         return Response.status(Status.FORBIDDEN).entity(e.getMessage()).build();
     }
 }
